@@ -1,0 +1,73 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-4 mb-4">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-dark text-white py-3">
+                <h5 class="mb-0 fw-bold">{{ title }}</h5>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST">
+                    {% csrf_token %}
+                    {% for field in form %}
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">{{ field.label }}</label>
+                            {{ field }}
+                            {% for error in field.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                    <button type="submit" class="btn btn-dark w-100 mt-2">{{ btn }} Entry</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0 fw-bold text-secondary">Complete Stream Logs Ledger</h5>
+            </div>
+            <div class="table-responsive p-3">
+                <table class="table table-striped align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Category / Scope</th>
+                            <th>Description</th>
+                            <th>Amount Value</th>
+                            <th>Recorded Timestamp</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for add in Add %}
+                        <tr>
+                            <td><span class="badge bg-success">Income: {{ add.source }}</span></td>
+                            <td>{{ item.description|default:"-" }}</td>
+                            <td class="text-success fw-bold">+${{ add.amount }}</td>
+                            <td class="small text-muted">{{ add.date|date:"Y-m-d H:i" }}</td>
+                        </tr>
+                        {% endfor %}
+
+                        {% for exp in expend %}
+                        <tr>
+                            <td><span class="badge bg-danger">Expense: {{ item.destination }}</span></td>
+                            <td>{{ exp.description|default:"-" }}</td>
+                            <td class="text-danger fw-bold">-${{ exp.amount }}</td>
+                            <td class="small text-muted">{{ exp.date|date:"Y-m-d H:i" }}</td>
+                        </tr>
+                        {% endfor %}
+
+                        {% if not Add and not expend %}
+                        <tr>
+                            <td colspan="4" class="text-center text-muted py-4">No logged statements matching this type.</td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
